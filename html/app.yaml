@@ -1,0 +1,42 @@
+  application: alchemist
+  version: 1
+  runtime: python27
+  api_version: 1
+  threadsafe: yes
+
+  handlers:
+
+  - url: /video/(.+)
+    static_files: video/\1
+    upload: video/(.*)
+
+  - url: /image/(.+)
+    static_files: image/\1
+    upload: image/(.*)
+
+  - url: /css/(.+)
+    static_files: css/\1
+    upload: css/(.*)
+
+  - url: /font/(.+)
+    static_files: font/\1
+    upload: font/(.*)
+
+  - url: /js/(.+)
+    static_files: js/\1
+    upload: js/(.*)
+    
+  - url: /favicon.ico
+    static_files: favicon.ico
+    upload: favicon.ico
+
+  - url: /main.js
+    static_files: main.js
+    upload: main.js
+    
+  - url: /out
+    static_dir: out
+
+  - url: /
+    static_files: index.html
+    upload: index.html
