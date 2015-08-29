@@ -18,7 +18,16 @@
   (reify
     om/IRender
     (render [_]
-      (dom/div #js {:className "root"}))))
+      (dom/div
+       #js {:className "root"}
+       (dom/img #js {:className "ingredient" :src "image/ivy.jpg"})
+       (dom/img #js {:className "ingredient" :src "image/chicken-foot.jpg"})
+       (dom/img #js {:className "ingredient" :src "image/mushroom.jpg"})
+       (dom/img #js {:className "ingredient" :src "image/forget-me-not.jpg"})
+       (dom/img #js {:className "ingredient" :src "image/mandrake.jpg"})
+       (dom/img #js {:className "ingredient" :src "image/scorpion.jpg"})
+       (dom/img #js {:className "ingredient" :src "image/toad.jpg"})
+       (dom/img #js {:className "ingredient" :src "image/crow-feather.jpg"})))))
 
 (om/root
  view

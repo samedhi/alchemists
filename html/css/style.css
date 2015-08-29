@@ -1,34 +1,12 @@
-img.ivy {
-    clip: rect(0px,60px,200px,0px);
+img.ingredient {
+    margin: 1rem;
+    border-radius: 8px;
 }
 
-img.crows-feet {
-    clip: rect(0px,60px,200px,0px);
+body {
+    background-color: green;
 }
 
-img.mushroom {
-    clip: rect(0px,60px,200px,0px);
-}
-
-img.forget-me-not {
-    clip: rect(0px,60px,200px,0px);
-}
-
-img.mandrake {
-    clip: rect(0px,60px,200px,0px);
-}
-
-img.scorpion {
-    clip: rect(0px,60px,200px,0px);
-}
-
-img.toad {
-    clip: rect(0px,60px,200px,0px);
-}
-
-img.crow-feather {
-    clip: rect(0px,60px,200px,0px);
-}
 
 /* html, body, #app { */
 /*     /\* background-color: orange; *\/ */
