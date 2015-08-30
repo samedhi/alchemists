@@ -6,8 +6,7 @@
    goog.dom
    goog.style)
   (:require-macros
-   [cljs.core.async.macros :refer [go go-loop]]
-   [alchemist.utility-macros :refer [defn-prevent fn-prevent]]))
+   [cljs.core.async.macros :refer [go go-loop]]))
 
 (enable-console-print!)
 
@@ -15,7 +14,7 @@
 
 (def COLORS [:red :green :blue])
 
-(def CHEMICALS #{:r-g+B- :r+g-B+ :r+G-b- :r-G+b+ :R-g-b+ :R+g+b- :R-G-B- :R+G+B+})
+(def AlCHEMICALS #{:r-g+B- :r+g-B+ :r+G-b- :r-G+b+ :R-g-b+ :R+g+b- :R-G-B- :R+G+B+})
 
 (def INGREDIENTS #{:ivy :chicken-foot :mushroom :forget-me-not
                    :mandrake :scorpion :toad :crow-feather})
@@ -24,38 +23,35 @@
 
 ;; FUNCTIONS
 
-(defn chemical? [chemical]
-  (if (keyword? chemical)
-    (let [c (name chemical)
+(defn bool? [b]
+  (or (true? b) (false? b)))
+
+(defn alchemical? [alchemical]
+  (if (keyword? alchemical)
+    (let [c (name alchemical)
           [m & _] (re-find #"(R|r)(\+|-)(G|g)(\+|-)(B|b)(\+|-)" c)]
-      (and (keyword? chemical) (= m c)))
+      (= m c))
     false))
 
 (defn detail? [detail]
   (and (every? (fn [k] (contains? detail k)) COLORS)
-       (every?
-        (fn [k]
-          (let [s (get-in detail [k :large?])] (or (true? s) (false? s))))
-        COLORS)
-       (every?
-        (fn [k]
-          (let [s (get-in detail [k :positive?])] (or (true? s) (false? s))))
-        COLORS)))
+       (every? #(bool? (get-in detail [% :large?])) COLORS)
+       (every? #(bool? (get-in detail [% :positive?])) COLORS)))
 
-(defn chemicals [detail]
+(defn alchemical [detail]
   {:pre [(detail? detail)]
-   :post [(chemical? %)]}
+   :post [(alchemical? %)]}
   (keyword
    (str
     (if (-> detail :red   :large?) "R" "r")
-    (if (-> detail :red   :large?) "+" "-")
+    (if (-> detail :red   :positive?) "+" "-")
     (if (-> detail :green :large?) "G" "g")
-    (if (-> detail :green :large?) "+" "-")
+    (if (-> detail :green :positive?) "+" "-")
     (if (-> detail :blue  :large?) "B" "b")
-    (if (-> detail :blue  :large?) "+" "-"))))
+    (if (-> detail :blue  :positive?) "+" "-"))))
 
-(defn details [chemical]
-  {:pre [(chemical? chemical)]
+(defn detail [chemical]
+  {:pre [(alchemical? chemical)]
    :post [(detail? %)]}
   (apply
    merge
@@ -63,6 +59,20 @@
          :let [capitalized? (=  (.toUpperCase s) s)
                polarity (= "+" p)]]
      {c {:large? capitalized? :positive? polarity}})))
+
+(defn mix [x y]
+  (let [x (if (detail? x) detail (detail x))
+        y (if (detail? y) detail (detail y))
+        potion-created? (fn [[_ b c]]
+                          (and (= (:positive? b) (:positive? c))
+                               (not= (:large? b) (:large? c))))
+        rs (->> (map #(vector %1 (get x %1) (get y %1)) COLORS)
+                (filter potion-created?)
+                (map first))]
+    (assert (-> rs count (<= 1)) "It should yield at most one potion (or a tasty soup)")
+    (if (empty? rs)
+      :neutral
+      (first rs))))
 
 ;; OM
 
