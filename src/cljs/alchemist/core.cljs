@@ -238,8 +238,6 @@
               fp (remove #(let [[a b] (seq %)] (not= (mix-into-potion a b) result)) p)
               expected (set (mapcat seq fp))
               actual alchemicals]
-          (println "actual" (pr-str actual))
-          (println "expected" (pr-str expected))
           (cond
             (= actual expected)
             (dom/div
