@@ -2,6 +2,7 @@
   (:require
    [cljs.core.async :as async :refer [>! <! put! chan dropping-buffer timeout close!]]
    [clojure.string :refer [join]]
+   [clojure.set :refer [difference subset? superset?]]
    [om.core :as om :include-macros true]
    [om.dom :as dom :include-macros true]
    goog.dom
@@ -25,8 +26,9 @@
                    :alchemical-y :R+G+B+
                    :visible? false}
                   :guess-alchemicals
-                  {:result {:color :blue :positive? false}
-                   :enabled-set #{}}}))
+                  {:result {:color :blue
+                            :positive? false}
+                   :alchemicals ALCHEMICALS}}))
 
 ;; FUNCTIONS
 
@@ -103,7 +105,6 @@
 
 ;; OM
 
-
 (def guess-results-text
   (dom/div
    #js {:className "text"}
@@ -139,7 +140,7 @@
        #js {:className "guess-result card-panel orange lighten-5"}
        guess-results-text
        (dom/div
-        #js {:className "refresh unselectable"}
+        #js {:className "refresh cursor unselectable"}
         (dom/i #js {:className "material-icons large"
                    :onClick #(let [x (rand-nth (vec ALCHEMICALS))
                                    y (rand-nth (vec (disj ALCHEMICALS x)))]
@@ -156,7 +157,7 @@
          (if visible?
            (dom/img #js {:className "potion"
                          :src (potion-to-image (mix-into-potion alchemical-x alchemical-y))})
-           (dom/div #js {:className "reveal grow"
+           (dom/div #js {:className "reveal cursor grow"
                          :onClick #(om/update! app [:visible?] true)}
                     (dom/i #js {:className "material-icons large"} "help")
                     "Click to Reveal"))))))))
@@ -169,15 +170,15 @@
     "Excellent, now that you have mastered it forward, lets do it in reverse!")
    (dom/p
     nil
-    "You see, in the game of Alchemists (by Matus Kotry) you are not
+    "You see, in the game of Alchemists you are not
     given the alchemicals and asked for the resulting potion. You are given two"
     (dom/span #js {:className "bold"} " unknown ")
-    "alchemicals and told what potion resulted when you mixed them. The whole game
-     is basically figuring out what the unkown alchemicals are (from a list of 8
-     possiblities)")
+    "alchemicals and told what potion resulted when you mixed them. The deductive part
+     of the game is figuring out what the unkown alchemicals are (from a list of 8
+     possiblities).")
    (dom/p
     nil
-    "Practice this below. You know what the resulting potion was when you mixed unkown 
+    "Practice this below. You can see what the resulting potion was when you mixed unkown 
     alchemical #1 with unkown alchemical #2. The 8 alchemicals are listed below.
     Using the rules you learned previously, what are the only alchemicals
     that could result in this potion? The alchemicals that #1 and #2 could be should be
@@ -191,7 +192,7 @@
        #js {:className "guess-alchemicals card-panel orange lighten-5"}
        (dom/div #js {:className "text"} guess-alchemicals-text)
        (dom/div
-        #js {:className "refresh unselectable"}
+        #js {:className "refresh cursor unselectable"}
         (dom/i #js {:className "material-icons large"
                     :onClick #(om/update!
                                app
@@ -199,7 +200,7 @@
                                 (if (zero? (rand-int 8))
                                   {:color :neutral}
                                   {:color (rand-nth COLORS) :positive? (rand-nth [true false])})
-                                :enabled-set #{}})}
+                                :alchemicals ALCHEMICALS})}
               "refresh"))
        (dom/div
         #js {:className "equation"}
@@ -214,7 +215,7 @@
         (dom/div
          #js {:className "result unselectable"}
          (dom/img #js {:className "potion" :src (potion-to-image result)})))
-       (dom/div #js {:className "query"} "Disable the 4 alchemicals that #1 and #2 cannot be.")
+       (dom/div #js {:className "query"} "Disable the alchemicals that #1 and #2 cannot be.")
        (apply
         dom/div
         #js {:className "choices"}
@@ -223,10 +224,38 @@
          (partition
           4
           (for [a ALCHEMICALS]
-            (dom/img #js {:className (str "alchemical"
-                                          (when (get alchemicals a) " disabled"))
+            (dom/img #js {:className (str "alchemical cursor"
+                                          (when-not (contains? alchemicals a) " disabled"))
                           :src (alchemical-to-image a)
-                          :onClick (fn [_] (om/transact! app [:alchemicals a] not))})))))))))
+                          :onClick (fn [_] (om/transact!
+                                            app
+                                            [:alchemicals]
+                                            #((if (contains? % a) disj conj) % a)))})))))
+       (dom/div
+        #js {:className "feedback"}
+        (let [fx (fn [a] (map #(set [a %]) (disj ALCHEMICALS a)))
+              p (set (mapcat fx ALCHEMICALS))
+              fp (remove #(let [[a b] (seq %)] (not= (mix-into-potion a b) result)) p)
+              expected (set (mapcat seq fp))
+              actual alchemicals]
+          (println "actual" (pr-str actual))
+          (println "expected" (pr-str expected))
+          (cond
+            (= actual expected)
+            (dom/div
+             #js {:className "success"}
+             (dom/i #js {:className "material-icons large"} "check")
+             "Correct! You marked all the disabled alchemicals!")
+            (superset? actual expected)
+            (dom/div
+             #js {:className "everything-ok"}
+             (dom/i #js {:className "material-icons large"} "check")
+             "Disable the invalid alchemicals above.")
+            (-> (difference expected actual) count pos?)
+            (dom/div
+             #js {:className "error"}
+             (dom/i #js {:className "material-icons large"} "clear")
+             "Oops! You have disabled a valid alchemical!"))))))))
 
 (defn view [{:keys [guess-result guess-alchemicals] :as app} owner]
   (reify
@@ -235,6 +264,16 @@
       (dom/div
        #js {:className "root container"}
        (dom/img #js {:className (str "banner") :src "image/alchemists.png"})
+       (dom/div
+        #js {:className "card-panel orange lighten-5"}
+        (dom/h2 #js {:style #js {:textAlign "center"}} "Alchemists")
+        (dom/h5 #js {:style #js {:textAlign "center"}}
+                "Or, how I stopped worrying about deduction and enjoyed the game.")
+        (dom/div
+         #js {:className "links"}
+         (dom/a #js {:href "http://czechgames.com/en/alchemists/"} "Alchemist site")
+         (dom/a #js {:href "http://czechgames.com/en/alchemists/downloads/"} "Alchemist rules")
+         (dom/a #js {:href "https://github.com/samedhi/alchemist"} "Github contributions")))
        (om/build guess-result-view guess-result)
        (om/build guess-alchemicals-view guess-alchemicals)))))
 

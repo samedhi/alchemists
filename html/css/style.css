@@ -17,7 +17,7 @@ body {
     height: 128px;
 }
 
-.refresh, .reveal {
+.cursor {
     cursor: pointer;
 }
 
@@ -92,6 +92,30 @@ body {
     font-size: 18px;
 }
 
+.feedback > * {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+}
+
 .bold {
     font-weight: bold;
+}
+
+.error i {
+    color: red;
+}
+
+.everything-ok i {
+    opacity: 0;
+}
+
+.success i {
+    color: green;
+}
+
+.links {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-around;
 }
