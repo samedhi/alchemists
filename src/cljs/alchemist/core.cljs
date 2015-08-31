@@ -23,7 +23,10 @@
 (def STATE (atom {:guess-result
                   {:alchemical-x :R-G-B-
                    :alchemical-y :R+G+B+
-                   :visible? false}}))
+                   :visible? false}
+                  :guess-alchemicals
+                  {:result {:color :blue :positive? false}
+                   :enabled-set #{}}}))
 
 ;; FUNCTIONS
 
@@ -101,12 +104,40 @@
 ;; OM
 
 
+(def guess-results-text
+  (dom/div
+   #js {:className "text"}
+   (dom/p
+    nil
+    "My Young Apprentice. So you played your first game of Alchemists and were embarassed? How is it
+   that everyone else was able to make Sherlock level deductions
+   and you are sitting here cautiously coloring in boxes like a six year old? Is 
+   there a trick to it? Are they cheating? Is it actual magic? Perhaps you are just stupid?")
+   (dom/p nil "Stop.")
+   (dom/p nil "Don't Panic.")
+   (dom/p nil "After some practice (which other people probably aquired doing
+   Sudoku) you will be able to deduce with the best of them. Once you have figured
+   out the deductive aspect of the game, you will be free to concentrate on the
+   actual game behind the game.")
+   (dom/p
+    nil
+    "You are learning to recognize what potion will result when two alchemicals are mixed. "
+    (dom/span
+     #js {:className "bold"}
+     "To figure out what potion is created, look for a match in sign 
+    and color between a big circle on one alchemical and a little circle on the other. 
+    This is the resulting color and sign of the potion. If this match cannot be found, 
+    then the potion is a neutral potion. ")
+    "Practice this a few times below, reset the question with
+   the refresh button.")))
+
 (defn guess-result-view [{:keys [alchemical-x alchemical-y visible?] :as app}]
   (reify
     om/IRender
     (render [_]
       (dom/div
-       #js {:className "guess-result"}
+       #js {:className "guess-result card-panel orange lighten-5"}
+       guess-results-text
        (dom/div
         #js {:className "refresh unselectable"}
         (dom/i #js {:className "material-icons large"
@@ -130,13 +161,82 @@
                     (dom/i #js {:className "material-icons large"} "help")
                     "Click to Reveal"))))))))
 
-(defn view [{:keys [guess-result] :as app} owner]
+(def guess-alchemicals-text
+  (dom/div
+   #js {:className "text"}
+   (dom/p
+    nil
+    "Excellent, now that you have mastered it forward, lets do it in reverse!")
+   (dom/p
+    nil
+    "You see, in the game of Alchemists (by Matus Kotry) you are not
+    given the alchemicals and asked for the resulting potion. You are given two"
+    (dom/span #js {:className "bold"} " unknown ")
+    "alchemicals and told what potion resulted when you mixed them. The whole game
+     is basically figuring out what the unkown alchemicals are (from a list of 8
+     possiblities)")
+   (dom/p
+    nil
+    "Practice this below. You know what the resulting potion was when you mixed unkown 
+    alchemical #1 with unkown alchemical #2. The 8 alchemicals are listed below.
+    Using the rules you learned previously, what are the only alchemicals
+    that could result in this potion? The alchemicals that #1 and #2 could be should be
+    in color and the alchemicals that they are not should be black and white.")))
+
+(defn guess-alchemicals-view [{:keys [result visible? alchemicals] :as app}]
+  (reify
+    om/IRender
+    (render [_]
+      (dom/div
+       #js {:className "guess-alchemicals card-panel orange lighten-5"}
+       (dom/div #js {:className "text"} guess-alchemicals-text)
+       (dom/div
+        #js {:className "refresh unselectable"}
+        (dom/i #js {:className "material-icons large"
+                    :onClick #(om/update!
+                               app
+                               {:result
+                                (if (zero? (rand-int 8))
+                                  {:color :neutral}
+                                  {:color (rand-nth COLORS) :positive? (rand-nth [true false])})
+                                :enabled-set #{}})}
+              "refresh"))
+       (dom/div
+        #js {:className "equation"}
+        (dom/div #js {:className "reveal"}
+                 (dom/i #js {:className "material-icons large"} "help")
+                 "Alchemical #1")
+        (dom/i #js {:className "material-icons large"} "add")
+        (dom/div #js {:className "reveal"}
+                 (dom/i #js {:className "material-icons large"} "help")
+                 "Alchemical #2")
+        (dom/i #js {:className "material-icons large"} "arrow_forward")
+        (dom/div
+         #js {:className "result unselectable"}
+         (dom/img #js {:className "potion" :src (potion-to-image result)})))
+       (dom/div #js {:className "query"} "Disable the 4 alchemicals that #1 and #2 cannot be.")
+       (apply
+        dom/div
+        #js {:className "choices"}
+        (map
+         #(apply dom/div #js {:className "row"} %)
+         (partition
+          4
+          (for [a ALCHEMICALS]
+            (dom/img #js {:className (str "alchemical"
+                                          (when (get alchemicals a) " disabled"))
+                          :src (alchemical-to-image a)
+                          :onClick (fn [_] (om/transact! app [:alchemicals a] not))})))))))))
+
+(defn view [{:keys [guess-result guess-alchemicals] :as app} owner]
   (reify
     om/IRender
     (render [_]
       (dom/div
        #js {:className "root container"}
-       (om/build guess-result-view guess-result)))))
+       (dom/img #js {:className (str "banner") :src "image/alchemists.png"})
+       (om/build guess-result-view guess-result)
+       (om/build guess-alchemicals-view guess-alchemicals)))))
 
 (om/root
  view
