@@ -64,4 +64,4 @@
 (deftask dev
   "Run project in development (start server manually)"
   []
-  (comp (appengine-dev) (watch) (speak) (reload) (cljs-repl) (cljs)))
+  (comp (serve) (watch) (speak) (reload) (cljs-repl) (cljs)))
