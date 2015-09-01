@@ -1,4 +1,4 @@
-(ns alchemist.core
+(ns alchemists.core
   (:require
    [cljs.core.async :as async :refer [>! <! put! chan dropping-buffer timeout close!]]
    [clojure.string :refer [join]]

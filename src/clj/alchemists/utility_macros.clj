@@ -1,4 +1,4 @@
-(ns alchemist.utility-macros)
+(ns alchemists.utility-macros)
 
 (defmacro fn-prevent [[e] & body]
   `(fn [~e]
