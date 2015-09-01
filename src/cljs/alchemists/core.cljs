@@ -4,7 +4,7 @@
    [clojure.string :refer [join]]
    [clojure.set :refer [difference subset? superset?]]
    [om.core :as om :include-macros true]
-   [om.dom :as dom :include-macros true]
+   [om.dom :as dom :include-macros true :refer [div img span]]
    goog.dom
    goog.style)
   (:require-macros
@@ -106,7 +106,7 @@
 ;; OM
 
 (def guess-results-text
-  (dom/div
+  (div
    #js {:className "text"}
    (dom/p
     nil
@@ -123,7 +123,7 @@
    (dom/p
     nil
     "You are learning to recognize what potion will result when two alchemicals are mixed. "
-    (dom/span
+    (span
      #js {:className "bold"}
      "To figure out what potion is created, look for a match in sign 
     and color between a big circle on one alchemical and a little circle on the other. 
@@ -136,34 +136,34 @@
   (reify
     om/IRender
     (render [_]
-      (dom/div
+      (div
        #js {:className "guess-result card-panel orange lighten-5"}
        guess-results-text
-       (dom/div
+       (div
         #js {:className "refresh cursor unselectable"}
         (dom/i #js {:className "material-icons large"
                    :onClick #(let [x (rand-nth (vec ALCHEMICALS))
                                    y (rand-nth (vec (disj ALCHEMICALS x)))]
                                (om/update! app {:alchemical-x x :alchemical-y y}))}
               "refresh"))
-       (dom/div
+       (div
         #js {:className "equation"}
-        (dom/img #js {:className "alchemical" :src (alchemical-to-image alchemical-x)})
+        (img #js {:className "alchemical" :src (alchemical-to-image alchemical-x)})
         (dom/i #js {:className "material-icons large"} "add")
-        (dom/img #js {:className "alchemical" :src (alchemical-to-image alchemical-y)})
+        (img #js {:className "alchemical" :src (alchemical-to-image alchemical-y)})
         (dom/i #js {:className "material-icons large"} "arrow_forward")
-        (dom/div
+        (div
          #js {:className "result unselectable"}
          (if visible?
-           (dom/img #js {:className "potion"
+           (img #js {:className "potion"
                          :src (potion-to-image (mix-into-potion alchemical-x alchemical-y))})
-           (dom/div #js {:className "reveal cursor grow"
+           (div #js {:className "reveal cursor grow"
                          :onClick #(om/update! app [:visible?] true)}
                     (dom/i #js {:className "material-icons large"} "help")
                     "Click to Reveal"))))))))
 
 (def guess-alchemicals-text
-  (dom/div
+  (div
    #js {:className "text"}
    (dom/p
     nil
@@ -172,7 +172,7 @@
     nil
     "You see, in the game of Alchemists you are not
     given the alchemicals and asked for the resulting potion. You are given two"
-    (dom/span #js {:className "bold"} " unknown ")
+    (span #js {:className "bold"} " unknown ")
     "alchemicals and told what potion resulted when you mixed them. The deductive part
      of the game is figuring out what the unkown alchemicals are (from a list of 8
      possiblities).")
@@ -188,10 +188,10 @@
   (reify
     om/IRender
     (render [_]
-      (dom/div
+      (div
        #js {:className "guess-alchemicals card-panel orange lighten-5"}
-       (dom/div #js {:className "text"} guess-alchemicals-text)
-       (dom/div
+       (div #js {:className "text"} guess-alchemicals-text)
+       (div
         #js {:className "refresh cursor unselectable"}
         (dom/i #js {:className "material-icons large"
                     :onClick #(om/update!
@@ -202,36 +202,36 @@
                                   {:color (rand-nth COLORS) :positive? (rand-nth [true false])})
                                 :alchemicals ALCHEMICALS})}
               "refresh"))
-       (dom/div
+       (div
         #js {:className "equation"}
-        (dom/div #js {:className "reveal"}
+        (div #js {:className "reveal"}
                  (dom/i #js {:className "material-icons large"} "help")
                  "Alchemical #1")
         (dom/i #js {:className "material-icons large"} "add")
-        (dom/div #js {:className "reveal"}
+        (div #js {:className "reveal"}
                  (dom/i #js {:className "material-icons large"} "help")
                  "Alchemical #2")
         (dom/i #js {:className "material-icons large"} "arrow_forward")
-        (dom/div
+        (div
          #js {:className "result unselectable"}
-         (dom/img #js {:className "potion" :src (potion-to-image result)})))
-       (dom/div #js {:className "query"} "Disable the alchemicals that #1 and #2 cannot be.")
+         (img #js {:className "potion" :src (potion-to-image result)})))
+       (div #js {:className "query"} "Disable the alchemicals that #1 and #2 cannot be.")
        (apply
-        dom/div
+        div
         #js {:className "choices"}
         (map
-         #(apply dom/div #js {:className "row"} %)
+         #(apply div #js {:className "row"} %)
          (partition
           4
           (for [a ALCHEMICALS]
-            (dom/img #js {:className (str "alchemical cursor"
+            (img #js {:className (str "alchemical cursor"
                                           (when-not (contains? alchemicals a) " disabled"))
                           :src (alchemical-to-image a)
                           :onClick (fn [_] (om/transact!
                                             app
                                             [:alchemicals]
                                             #((if (contains? % a) disj conj) % a)))})))))
-       (dom/div
+       (div
         #js {:className "feedback"}
         (let [fx (fn [a] (map #(set [a %]) (disj ALCHEMICALS a)))
               p (set (mapcat fx ALCHEMICALS))
@@ -240,17 +240,17 @@
               actual alchemicals]
           (cond
             (= actual expected)
-            (dom/div
+            (div
              #js {:className "success"}
              (dom/i #js {:className "material-icons large"} "check")
              "Correct! You marked all the disabled alchemicals!")
             (superset? actual expected)
-            (dom/div
+            (div
              #js {:className "everything-ok"}
              (dom/i #js {:className "material-icons large"} "check")
              "Disable the invalid alchemicals above.")
             (-> (difference expected actual) count pos?)
-            (dom/div
+            (div
              #js {:className "error"}
              (dom/i #js {:className "material-icons large"} "clear")
              "Oops! You have disabled a valid alchemical!"))))))))
@@ -259,15 +259,15 @@
   (reify
     om/IRender
     (render [_]
-      (dom/div
+      (div
        #js {:className "root container"}
-       (dom/img #js {:className (str "banner") :src "image/alchemists.png"})
-       (dom/div
+       (img #js {:className (str "banner") :src "image/alchemists.png"})
+       (div
         #js {:className "card-panel orange lighten-5"}
         (dom/h2 #js {:style #js {:textAlign "center"}} "Alchemists")
         (dom/h5 #js {:style #js {:textAlign "center"}}
                 "Or, how I stopped worrying about deduction and enjoyed the game.")
-        (dom/div
+        (div
          #js {:className "links"}
          (dom/a #js {:href "http://czechgames.com/en/alchemists/"} "Alchemist site")
          (dom/a #js {:href "http://czechgames.com/en/alchemists/downloads/"} "Alchemist rules")
