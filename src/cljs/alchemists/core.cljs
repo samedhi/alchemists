@@ -255,7 +255,23 @@
              (dom/i #js {:className "material-icons large"} "clear")
              "Oops! You have disabled a valid alchemical!"))))))))
 
-(defn view [{:keys [guess-result guess-alchemicals] :as app} owner]
+
+(def deductive-game-text 
+  (div 
+   #js {:className "text"}
+   (dom/p
+    nil 
+    "TEXT TEXT TEXT")))
+
+(defn deductive-game-view [{:keys [] :as app} owner]
+  (reify 
+    om/IRender
+    (render [_]
+      (div 
+       #js {:className "guess-alchemicals card-panel orange lighten-5"}
+       (div #js {:className "text"} deductive-game-text)))))
+
+(defn view [{:keys [guess-result guess-alchemicals deductive-game] :as app} owner]
   (reify
     om/IRender
     (render [_]
@@ -273,7 +289,8 @@
          (dom/a #js {:href "http://czechgames.com/en/alchemists/downloads/"} "Alchemist rules")
          (dom/a #js {:href "https://github.com/samedhi/alchemist"} "Github contributions")))
        (om/build guess-result-view guess-result)
-       (om/build guess-alchemicals-view guess-alchemicals)))))
+       (om/build guess-alchemicals-view guess-alchemicals)
+       (om/build deductive-game-view deductive-game)))))
 
 (om/root
  view
