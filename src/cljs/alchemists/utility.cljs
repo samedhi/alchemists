@@ -1,7 +1,8 @@
 (ns alchemists.utility
   (:require
    [alchemists.data :refer [COLORS]]
-   [clojure.string :refer [join]]))
+   [om.dom :as dom :include-macros true]
+   clojure.string))
 
 (defn bool? [b]
   (or (true? b) (false? b)))
@@ -60,12 +61,12 @@
                (str (-> color name first)
                     (if large? "l" "s")
                     (if positive? "p" "n"))))]
-    (str "image/" (join "_" (map fx COLORS)) ".png")))
+    (str "image/" (clojure.string/join "_" (map fx COLORS)) ".png")))
 
 (defn potion-to-image [{:keys [positive? color]}]
   (str
    "image/"
-   (join
+   (clojure.string/join
       "_"
       (remove
        nil?
@@ -73,3 +74,9 @@
         (name color)
         (cond positive? "positive" (false? positive?) "negative")]))
    ".png") )
+
+(defn p [& cs]
+  (->> (partition-by string? cs)
+       (map #(if (-> % first string?) (clojure.string/join " " %) %))
+       flatten
+       (apply dom/p nil)))
