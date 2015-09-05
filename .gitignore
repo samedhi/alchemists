@@ -2,3 +2,4 @@
 /target/
 /.repl/
 /out/
+/npm-debug.log
