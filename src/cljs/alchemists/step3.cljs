@@ -1,11 +1,25 @@
 (ns alchemists.step3
   (:require
-   [alchemists.data :refer [COLORS ALCHEMICALS INGREDIENTS STATE]]
+   [alchemists.data :refer [STATE COLORS ALCHEMICALS INGREDIENTS STATE]]
    [alchemists.utility :refer [bool? alchemical? detail? alchemical detail mix-into-potion
                                alchemical-to-image potion-to-image p]]
    [om.core :as om :include-macros true]
    [om.dom :as dom :include-macros true]
    clojure.string))
+
+;; FX
+
+(defn ingredients-to-alchemicals []
+  (zipmap (shuffle INGREDIENTS) (shuffle ALCHEMICALS)))
+
+(defn random-initial-state []
+  {:expected (ingredients-to-alchemicals)})
+
+;; STATE
+
+(swap! STATE assoc :step3-data (random-initial-state))
+
+;; HTML
 
 (def deductive-game-text 
   (dom/div 
@@ -22,11 +36,32 @@
       "for all ingredients. That is the game.")
    (p "Good gaming and good luck.")))
 
-(defn view [app owner]
+(defn pyramid-view [app owner]
+  (reify
+    om/IRender
+    (render [_]
+      (dom/div 
+       #js {:className "pyramid"}))))
+
+(defn table-view [app owner]
+  (reify
+    om/IRender
+    (render [_]
+      (dom/div 
+       #js {:className "pyramid"}))))
+
+(defn view [{:keys [pyramid-data table-data] :as app} owner]
   (reify 
     om/IRender
     (render [_]
       (dom/div 
        #js {:className "guess-alchemicals card-panel orange lighten-5"}
-       (dom/div #js {:className "text"} deductive-game-text)))))
+       (dom/div #js {:className "text"} deductive-game-text)
+       (dom/div
+        #js {:className "refresh cursor unselectable"}
+        (dom/i #js {:className "material-icons large"
+                    :onClick #(om/update! app (random-initial-state))}
+              "refresh"))
+       (om/build pyramid-view pyramid-data)
+       (om/build table-view table-data)))))
 

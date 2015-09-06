@@ -13,11 +13,4 @@
                    :toad 
                    :crow-feather})
 
-(def STATE (atom {:step1-data
-                  {:alchemical-x :R-G-B-
-                   :alchemical-y :R+G+B+
-                   :visible? false}
-                  :step2-data
-                  {:result {:color :blue
-                            :positive? false}
-                   :alchemicals ALCHEMICALS}}))
+(def STATE (atom {}))

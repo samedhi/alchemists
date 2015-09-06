@@ -17,8 +17,8 @@
     (render [_]
       (dom/div
        #js {:className "root container"}
-       (dom/img #js {:className (str "banner") :src "image/alchemists.png"})
-       (dom/div
+       #_(dom/img #js {:className (str "banner") :src "image/alchemists.png"})
+       #_(dom/div
         #js {:className "card-panel orange lighten-5"}
         (dom/h2 #js {:style #js {:textAlign "center"}} "Alchemists")
         (dom/h5 #js {:style #js {:textAlign "center"}}

@@ -1,10 +1,22 @@
 (ns alchemists.step1
   (:require 
-   [alchemists.data :refer [COLORS ALCHEMICALS INGREDIENTS STATE]]
+   [alchemists.data :refer [STATE COLORS ALCHEMICALS INGREDIENTS STATE]]
    [alchemists.utility :refer [bool? alchemical? detail? alchemical detail mix-into-potion
                                alchemical-to-image potion-to-image]]
    [om.core :as om :include-macros true]
    [om.dom :as dom :include-macros true]))
+
+;; FX
+(defn random-initial-state []
+  (let [x (rand-nth (vec ALCHEMICALS))
+        y (rand-nth (vec (disj ALCHEMICALS x)))]
+    {:alchemical-x x :alchemical-y y}))
+
+;; STATE
+
+(swap! STATE assoc :step1-data (random-initial-state))
+
+;; HTML
 
 (defn view [{:keys [alchemical-x alchemical-y visible?] :as app}]
   (reify
@@ -43,9 +55,7 @@
        (dom/div
         #js {:className "refresh cursor unselectable"}
         (dom/i #js {:className "material-icons large"
-                    :onClick #(let [x (rand-nth (vec ALCHEMICALS))
-                                    y (rand-nth (vec (disj ALCHEMICALS x)))]
-                                (om/update! app {:alchemical-x x :alchemical-y y}))}
+                    :onClick #(om/update! app (random-initial-state))}
                "refresh"))
        (dom/div
         #js {:className "equation"}

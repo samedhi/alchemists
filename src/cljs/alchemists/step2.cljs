@@ -7,6 +7,20 @@
    [om.core :as om :include-macros true]
    [om.dom :as dom :include-macros true]))
 
+;; FX
+(defn random-initial-state []
+  {:result
+   (if (zero? (rand-int 8))
+     {:color :neutral}
+     {:color (rand-nth COLORS) :positive? (rand-nth [true false])})
+   :alchemicals ALCHEMICALS})
+
+;; STATE
+
+(swap! STATE assoc :step2-data (random-initial-state))
+
+;; HTML
+
 (def guess-alchemicals-text
   (dom/div
    #js {:className "text"}
@@ -37,13 +51,7 @@
        (dom/div
         #js {:className "refresh cursor unselectable"}
         (dom/i #js {:className "material-icons large"
-                    :onClick #(om/update!
-                               app
-                               {:result
-                                (if (zero? (rand-int 8))
-                                  {:color :neutral}
-                                  {:color (rand-nth COLORS) :positive? (rand-nth [true false])})
-                                :alchemicals ALCHEMICALS})}
+                    :onClick #(om/update! app (random-initial-state))}
               "refresh"))
        (dom/div
         #js {:className "equation"}
