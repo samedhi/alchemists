@@ -9,11 +9,8 @@
 
 ;; FX
 
-(defn ingredients-to-alchemicals []
-  (zipmap (shuffle INGREDIENTS) (shuffle ALCHEMICALS)))
-
 (defn random-initial-state []
-  {:expected (ingredients-to-alchemicals)})
+  {:expected (zipmap (shuffle INGREDIENTS) (shuffle ALCHEMICALS))})
 
 ;; STATE
 
@@ -36,21 +33,33 @@
       "for all ingredients. That is the game.")
    (p "Good gaming and good luck.")))
 
-(defn pyramid-view [app owner]
+(defn build-pyramid [xs]
+  (->> (map #(vector % %) xs)
+       (iterate #(map (fn [[a _] [_ b]] [a b]) % (rest %)))
+       (take-while (complement empty?))))
+
+(defn pyramid-view [{:keys [expected] :as app} owner]
   (reify
     om/IRender
     (render [_]
-      (dom/div 
-       #js {:className "pyramid"}))))
+      (apply
+       dom/div 
+       #js {:className "pyramid"}
+       (for [row (-> expected build-pyramid reverse)]
+         (apply
+          dom/div
+          #js {:className "row"}
+          (for [[a b] row]
+            (dom/div #js {:className "mixture"} "A"))))))))
 
 (defn table-view [app owner]
   (reify
     om/IRender
     (render [_]
       (dom/div 
-       #js {:className "pyramid"}))))
+       #js {:className "table"}))))
 
-(defn view [{:keys [pyramid-data table-data] :as app} owner]
+(defn view [app owner]
   (reify 
     om/IRender
     (render [_]
@@ -62,6 +71,6 @@
         (dom/i #js {:className "material-icons large"
                     :onClick #(om/update! app (random-initial-state))}
               "refresh"))
-       (om/build pyramid-view pyramid-data)
-       (om/build table-view table-data)))))
+       (om/build pyramid-view app)
+       (om/build table-view app)))))
 
