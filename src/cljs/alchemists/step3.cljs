@@ -45,7 +45,7 @@
       (apply
        dom/div 
        #js {:className "pyramid"}
-       (for [row (-> expected build-pyramid reverse)]
+       (for [row (-> expected build-pyramid reverse butlast)]
          (apply
           dom/div
           #js {:className "row"}

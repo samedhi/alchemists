@@ -119,3 +119,8 @@ body {
     display: flex;
     justify-content: space-around;
 }
+
+.pyramid .row {
+    display: flex;
+    justify-content: center;
+}
