@@ -1,5 +1,4 @@
 img.ingredient {
-    margin: 1rem;
     border-radius: 8px;
 }
 
@@ -124,10 +123,45 @@ body {
     background-color: red;
 }
 
-.pyramid .row {
+.pyramid .pyramid-row {
     display: flex;
     justify-content: space-around;
     background-color: yellow;
+    position: relative;
+}
+
+.pyramid .pyramid-row:nth-child(1) {
+    left: 43.75%;
+    width: 12.5%;
+}
+
+.pyramid .pyramid-row:nth-child(2) {
+    left: 37.5%;
+    width: 25%;
+}
+.pyramid .pyramid-row:nth-child(3) {
+    left: 31.25%;
+    width: 37.5%;
+}
+
+.pyramid .pyramid-row:nth-child(4) {
+    left: 25%;
+    width: 50%;
+}
+
+.pyramid .pyramid-row:nth-child(5) {
+    left: 18.75%;
+    width: 62.5%;
+}
+
+.pyramid .pyramid-row:nth-child(6) {
+    left: 12.5%;
+    width: 75%;
+}
+
+.pyramid .pyramid-row:nth-child(7) {
+    left: 6.12%;
+    width: 87.5%
 }
 
 .pyramid .row .mixture {
@@ -138,14 +172,16 @@ body {
 
 .table {
     display: flex;
-    width: 100%;
-}
-
-.table {
     background-color: green;
+    justify-content: space-around;
 }
 
 .center-flex {
     display: flex;
     flex-direction: column;
+    width: 100%;
+}
+
+.column img.ingredient {
+    width: 100%;
 }

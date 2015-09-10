@@ -48,7 +48,7 @@
        (for [row (-> expected build-pyramid reverse butlast)]
          (apply
           dom/div
-          #js {:className "row"}
+          #js {:className "pyramid-row"}
           (for [[a b] row]
             (dom/div #js {:className "mixture"} "A"))))))))
 
@@ -63,7 +63,7 @@
          (dom/div
           #js {:className "column"}
           (dom/img
-           #js {:className "ingredients"
+           #js {:className "ingredient"
                 :src (->> e first ingredient-to-image)})))))))
 
 (defn view [app owner]
