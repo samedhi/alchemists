@@ -73,7 +73,10 @@
        ["potion"
         (name color)
         (cond positive? "positive" (false? positive?) "negative")]))
-   ".png") )
+   ".png"))
+
+(defn ingredient-to-image [ingredient]
+  (str "image/" (name ingredient) ".jpg"))
 
 (defn p [& cs]
   (->> (partition-by string? cs)

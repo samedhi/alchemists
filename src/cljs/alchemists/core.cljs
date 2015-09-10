@@ -28,8 +28,8 @@
          (dom/a #js {:href "http://czechgames.com/en/alchemists/"} "Alchemist site")
          (dom/a #js {:href "http://czechgames.com/en/alchemists/downloads/"} "Alchemist rules")
          (dom/a #js {:href "https://github.com/samedhi/alchemist"} "Github contributions")))
-       (om/build step1/view step1-data)
-       (om/build step2/view step2-data)
+       ;; (om/build step1/view step1-data)
+       ;; (om/build step2/view step2-data)
        (om/build step3/view step3-data)))))
 
 (om/root

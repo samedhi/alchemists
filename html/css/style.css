@@ -44,10 +44,10 @@ body {
 .grow:hover { transform: scale(1.1); }
 
 .unselectable {
-    -webkit-user-select: none; /* Chrome/Safari */        
+    -webkit-user-select: none; /* Chrome/Safari */
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* IE10+ */
-    
+
     /* Rules below not implemented in browsers yet */
     -o-user-select: none;
     user-select: none;
@@ -83,7 +83,7 @@ body {
 }
 
 .root.container {
-    
+
 }
 
 .text {
@@ -120,7 +120,32 @@ body {
     justify-content: space-around;
 }
 
+.pyramid {
+    background-color: red;
+}
+
 .pyramid .row {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
+    background-color: yellow;
+}
+
+.pyramid .row .mixture {
+    width: 2rem;
+    height: 2rem;
+    background-color: pink;
+}
+
+.table {
+    display: flex;
+    width: 100%;
+}
+
+.table {
+    background-color: green;
+}
+
+.center-flex {
+    display: flex;
+    flex-direction: column;
 }

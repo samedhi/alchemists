@@ -2,7 +2,7 @@
   (:require
    [alchemists.data :refer [STATE COLORS ALCHEMICALS INGREDIENTS STATE]]
    [alchemists.utility :refer [bool? alchemical? detail? alchemical detail mix-into-potion
-                               alchemical-to-image potion-to-image p]]
+                               alchemical-to-image potion-to-image p ingredient-to-image]]
    [om.core :as om :include-macros true]
    [om.dom :as dom :include-macros true]
    clojure.string))
@@ -18,8 +18,8 @@
 
 ;; HTML
 
-(def deductive-game-text 
-  (dom/div 
+(def deductive-game-text
+  (dom/div
    #js {:className "text"}
    (dom/h3 nil "Step 3: Practice it")
    (p "Now that you know how to play the deductive aspect of this game, all you need"
@@ -43,7 +43,7 @@
     om/IRender
     (render [_]
       (apply
-       dom/div 
+       dom/div
        #js {:className "pyramid"}
        (for [row (-> expected build-pyramid reverse butlast)]
          (apply
@@ -52,25 +52,33 @@
           (for [[a b] row]
             (dom/div #js {:className "mixture"} "A"))))))))
 
-(defn table-view [app owner]
+(defn table-view [{:keys [expected] :as app} owner]
   (reify
     om/IRender
     (render [_]
-      (dom/div 
-       #js {:className "table"}))))
+      (apply
+       dom/div
+       #js {:className "table"}
+       (for [e expected]
+         (dom/div
+          #js {:className "column"}
+          (dom/img
+           #js {:className "ingredients"
+                :src (->> e first ingredient-to-image)})))))))
 
 (defn view [app owner]
-  (reify 
+  (reify
     om/IRender
     (render [_]
-      (dom/div 
+      (dom/div
        #js {:className "guess-alchemicals card-panel orange lighten-5"}
        (dom/div #js {:className "text"} deductive-game-text)
        (dom/div
         #js {:className "refresh cursor unselectable"}
         (dom/i #js {:className "material-icons large"
                     :onClick #(om/update! app (random-initial-state))}
-              "refresh"))
-       (om/build pyramid-view app)
-       (om/build table-view app)))))
-
+               "refresh"))
+       (dom/div
+        #js {:className "center-flex"}
+        (om/build pyramid-view app)
+        (om/build table-view app))))))
