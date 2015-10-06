@@ -30,15 +30,15 @@
         (dom/p
          nil
          "My Young Apprentice. So you played your first game of Alchemists and were "
-         "embarassed. How is it that everyone else was able to make Sherlock level "
-         "deductions and you are sitting here cautiously coloring in boxes like a "
-         "six year old? Is there a trick to it? Are they cheating? Is it actual magic? "
+         "embarassed. Everyone else was able to make Sherlock skilled "
+         "deductions and you are cautiously coloring in boxes like a "
+         "six year old! Is there a trick to it? Are they cheating? Is it actual magic? "
          "Perhaps you are just stupid?")
         (dom/p nil "Stop.")
         (dom/p nil "Don't Panic.")
         (dom/p 
          nil 
-         "After some practice (which other people probably aquired doing Sudoku) "
+         "After some practice (which others probably aquired doing Sudoku) "
          "you will be able to deduce with the best of them. Once you have figured "
          "out the deductive aspect of the game, you will be free to concentrate on "
          "the actual game behind the game.")

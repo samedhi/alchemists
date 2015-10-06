@@ -24,7 +24,7 @@
    (dom/h3 nil "Step 3: Practice it")
    (p "Now that you know how to play the deductive aspect of this game, all you need"
       "is practice.")
-   (p "Just like the real game, the following demo will let you observe the result"
+   (p "Just like the real game, the following experiment will let you observe the result"
       "of mixing two ingredients to get a result. Based on the resulting potion, you"
       "should be able to disable some of the alchemicals as possible alchemicals"
       "for those two ingredients. Repeat the process of randomly mixing two ingredients"

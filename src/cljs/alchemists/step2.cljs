@@ -29,7 +29,7 @@
    (p
     "In the game of Alchemists you are not given two"
     (dom/span #js {:className "bold"} " known ")
-    "alchemicals and asked for the resulting potion. You are given two"
+    "alchemicals and asked for the resulting potion. That is too easy! You are given two"
     (dom/span #js {:className "bold"} " unknown ")
     "alchemicals and told what potion resulted when you mixed them. The deductive part"
     "of the game is figuring out what the unknown alchemicals are (from a list of 8"
