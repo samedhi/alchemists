@@ -49,8 +49,12 @@
          (apply
           dom/div
           #js {:className "pyramid-row"}
-          (for [[a b] row]
-            (dom/div #js {:className "mixture"} "A"))))))))
+          (for [[[_ a] [_ b]] row
+                :let [m (mix-into-potion a b)
+                      p (potion-to-image m)]]
+            (dom/div 
+             #js {:className "mixture"} 
+             (dom/img #js {:className "potion" :src p})))))))))
 
 (defn table-view [{:keys [expected] :as app} owner]
   (reify
